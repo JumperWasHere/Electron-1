@@ -1,10 +1,15 @@
 //controller
 // All the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
+const {
+  ipcRenderer,
+  contextBridge
+} = require("electron");
+// const PouchDB = require('pouchdb');
+// const db = new PouchDB('mydb');
+// const axios = require('axios');
 
-const PouchDB = require('pouchdb');
-const db = new PouchDB('mydb');
-const axios = require('axios');
+
 
 window.addEventListener('DOMContentLoaded', () => {
     const replaceText = (selector, text) => {
@@ -15,7 +20,20 @@ window.addEventListener('DOMContentLoaded', () => {
     for (const dependency of ['chrome', 'node', 'electron']) {
       replaceText(`${dependency}-version`, process.versions[dependency])
     }
-
+    
+  contextBridge.exposeInMainWorld(
+    'api',
+    {
+      sendToA: function () {
+        ipcRenderer.send("A");
+      },
+      receiveFromD: function (func) {
+        {
+          ipcRenderer.on("D", (event, ...args) => func(event, ...args));
+        }
+      }
+    }
+  )
 
     // callApi()
 

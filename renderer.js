@@ -10,6 +10,12 @@
 const Username = document.getElementById('Username');
 const Password = document.getElementById('password');
 
+window.api.receiveFromD((data) => {
+	console.log(`Received ${data} from main process`);
+});
+
+// Send a message to the main process
+window.api.sendToA();
 // dataForm.addEventListener('click', () => {
 //     axios.post('http://test-demo.aemenersol.com/api/account/login',
 //     {
@@ -24,9 +30,9 @@ const Password = document.getElementById('password');
 //         apiResponseDiv.textContent = `API Error: ${error.message}`;
 //       });
 //   });
-const electron = require('electron');
+// const electron = require('electron');
 // Importing the net Module from electron remote
-const net = electron.remote.net;
+// const net = electron.remote.net;
 const dataForm = document.getElementById('dataForm');
 // let get = document.getElementById('get');
 // dataForm.addEventListener('click', () => {

@@ -6,23 +6,31 @@ const db = new PouchDB('mydb');
 // const bootstrap = require('bootstrap');
 const createWindow = () => {
     // Create the browser window.
-    const win = new BrowserWindow({
+  const window = new BrowserWindow({
       width: 800,
       height: 600,
+      show: false,
       webPreferences: {
-        nodeIntegration: true,
+        // nodeIntegration: true,
+        contextIsolation: true,
+        sandbox: true,
         preload: path.join(__dirname, 'preload.js'),
       }
     })
+  // Event listeners on the window -> HTML will be visible without any white screen flicker.
+  window.webContents.on("did-finish-load", () => {
+    window.show();
+    window.focus();
+  });
     // and load the index.html of the app.
-    win.loadFile('index.html')
+  window.loadFile('app/dist/index.html')
       // Open the DevTools.
   // mainWindow.webContents.openDevTools()
-  db.put({
-    _id: 'mydoc',
-    title: 'My Document',
-    content: 'Hello, PouchDB!',
-  });
+  // db.put({
+  //   _id: 'mydoc',
+  //   title: 'My Document',
+  //   content: 'Hello, PouchDB!',
+  // });
   }
   // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
