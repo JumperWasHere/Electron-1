@@ -4,18 +4,14 @@ const axios = require('axios');
 const apiUrl = 'http://test-demo.aemenersol.com/api/account/login';
 const PouchDB = require('pouchdb');
 const db = new PouchDB('AuthDb');
+let mainWindow;
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+   mainWindow = new BrowserWindow({
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   })
 
-  ipcMain.on('set-title', (event, title) => {
-    const webContents = event.sender
-    const win = BrowserWindow.fromWebContents(webContents)
-    win.setTitle(title)
-  })
 
   mainWindow.loadFile('index.html')
 }
@@ -38,7 +34,7 @@ async function handleFileOpen() {
   // }
 }
 app.whenReady().then( () => {
-
+  createWindow();
   ipcMain.on("user:login", (event, data) => {
 
     console.log('login main.js', JSON.parse(data));
@@ -55,10 +51,19 @@ app.whenReady().then( () => {
      axios.request(config)
       .then(async(response) => {
         console.log(JSON.stringify(response.data));
+        // if (response.data != null) {
+          // event.reply("login-failed");
+        //   return;
+        // }
         storeData(JSON.parse(data), response.data);
+        openHome()
       })
       .catch((error) => {
-        console.log(error);
+        // console.log('errrr--------------',error);
+        const responseData = {
+          message: "Wrong Auth",
+        };
+        event.reply("login-failed", responseData);
       });
   })
   createWindow()
@@ -66,7 +71,7 @@ app.whenReady().then( () => {
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
-  showTodos()
+  // showTodos()
 
 })
 
@@ -93,4 +98,7 @@ function showTodos() {
     console.log(doc.rows);
     // redrawTodosUI(doc.rows);
   });
+}
+function openHome() {
+  mainWindow.loadFile("./app/src/home.html");
 }
