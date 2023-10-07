@@ -9,6 +9,6 @@ contextBridge.exposeInMainWorld('electron', {
 // })
 // ipcRenderer.send('asynchronous-message', 'ping')
 ipcRenderer.on("login-failed", (event, message) => {
-  console.log('message', message);
-  document.getElementById("error-message").innerHTML = message.message;
+  // console.log('message', message);
+  // document.getElementById("error-message").innerHTML = message.message;
 });

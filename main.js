@@ -13,7 +13,8 @@ function createWindow() {
   })
 
 
-  mainWindow.loadFile('index.html')
+  // mainWindow.loadFile('index.html')
+  openHome()
 }
 function handleSetTitle(event, title) {
   console.log('func from main.js');
@@ -64,6 +65,7 @@ app.whenReady().then( () => {
           message: "Wrong Auth",
         };
         event.reply("login-failed", responseData);
+        openMessageBox()
       });
   })
   createWindow()
@@ -101,4 +103,22 @@ function showTodos() {
 }
 function openHome() {
   mainWindow.loadFile("./app/src/home.html");
+}
+
+function openMessageBox(){
+  const options = {
+    type: 'error',
+    buttons: ['Ok'],
+    defaultId: 0,
+    title: 'Fail',
+    message: 'Login Fail',
+    detail: 'Please Insert Correct Username and Password',
+    // checkboxLabel: 'Remember my answer',
+    // checkboxChecked: true,
+  };
+
+  dialog.showMessageBox(null, options, (response, checkboxChecked) => {
+    console.log(response);
+    console.log(checkboxChecked);
+  });
 }

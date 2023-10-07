@@ -5,32 +5,50 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link href="./style.css" rel="stylesheet">
 
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
+    <title>AEM Electron Assessment 2</title>
   </head>
   <body>
-    <h1>Hello World!</h1>
+    <!-- <h1>Sign In</h1> -->
     <!-- We are using Node.js <span id="node-version"></span>,
     Chromium <span id="chrome-version"></span>,
     and Electron <span id="electron-version"></span>. -->
     <!-- <form id="dataForm"> -->
-      <div class="form-group">
-        <label for="Username">Username</label>
-        <input type="text" class="form-control" id="Username" aria-describedby="emailHelp" placeholder="Username" required>
-        <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Password" required>
+      <div class="container container-login">
+
+        <div class="card card-login">
+          <div class="card-body">
+            <h5 class="card-title">Sign In</h5>
+            <!-- This is some text within a card body. -->
+            <div class="form-group">
+              <label for="Username">Username</label>
+              <input type="text" class="form-control" id="Username" aria-describedby="emailHelp"  required>
+              <label id="error-username" class="error-label"></label>
+              <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password"  required>
+              <label id="error-password" class="error-label"></label>
+            </div>
+            <div class="footer">
+
+              <a href="#" class="bn5" id="login">SIGNIN</a>
+            </div>
+
+          </div>
+        </div>
       </div>
    
-      <button type="submit" class="btn btn-primary" id="login">Submit</button>
+      <!-- <button type="submit" class="btn btn-primary" id="login">Submit</button> -->
+
     <!-- </form> -->
     <!-- <button id="fetchData">Fetch Data from PouchDB</button> -->
 
     <div >
-      <label id="error-message"></label>
+      <!-- <label id="error-message" class="error-label"></label> -->
     </div>
 
     <script src="./renderer.js"></script>
