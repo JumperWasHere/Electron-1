@@ -3,7 +3,10 @@ const path = require('path')
 const axios = require('axios');
 const apiUrl = 'http://test-demo.aemenersol.com/api/account/login';
 const PouchDB = require('pouchdb');
-const db = new PouchDB('AuthDb');
+const db = new PouchDB('authdb');
+const moment = require('moment');
+const now = moment();
+const remoteDBURL = 'http://127.0.0.1:5984/authdb';
 let mainWindow;
 function createWindow() {
    mainWindow = new BrowserWindow({
@@ -22,21 +25,12 @@ function handleSetTitle(event, title) {
   const win = BrowserWindow.fromWebContents(webContents)
   win.setTitle(title)
 }
-function handleMessage(event, title){
-  console.log('func from main.js', title);
-
-}
-async function handleFileOpen() {
-  console.log('func from main.js');
-
-  // const { canceled, filePaths } = await dialog.showOpenDialog()
-  // if (!canceled) {
-  //   return filePaths[0]
-  // }
-}
-app.whenReady().then( () => {
+app.whenReady().then( async() => {
   createWindow();
+  
   ipcMain.on("user:login", (event, data) => {
+    openHome()
+return
 
     console.log('login main.js', JSON.parse(data));
     let config = {
@@ -68,12 +62,31 @@ app.whenReady().then( () => {
         openMessageBox()
       });
   })
-  createWindow()
+  // createWindow()
+ await ipcMain.on("request-datatable", async (event) => {
 
+    // let data =  await showTodos();
+    let data;
+   await db.allDocs({ include_docs: true, descending: true }, async function (err, doc) {
+      // console.log(doc.rows);
+      if (err) {
+      }
+      data = doc.rows;
+      console.log('-------------------after show db');
+      // redrawTodosUI(doc.rows);
+    });
+   let fetchData = data.map(item => item.doc);
+  //  console.log('request-datatable', data);
+  //  console.log('fetchData', fetchData);
+
+    // event.reply("login-failed", responseData);
+   mainWindow.webContents.send('data-pouchdb', fetchData);
+
+  })
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
-  // showTodos()
+  replicateDb();
 
 })
 
@@ -86,6 +99,7 @@ app.on('window-all-closed', function () {
      username: data.username,
      password: data.password,
      token: token,
+     dateTime: now
    };
    db.put(document)
     .then((response) => {
@@ -95,13 +109,21 @@ app.on('window-all-closed', function () {
       console.error('Error saving document:', error);
     });
 }
-function showTodos() {
-  db.allDocs({ include_docs: true, descending: true }, function (err, doc) {
+async function showTodos() {
+let data;
+ await  db.allDocs({ include_docs: true, descending: true }, async function (err, doc) {
     console.log(doc.rows);
+    if (err){
+      return []
+    }
+   console.log(' doc.rows---------------------');
+   return data = doc.rows;
     // redrawTodosUI(doc.rows);
   });
 }
 function openHome() {
+ 
+
   mainWindow.loadFile("./app/src/home.html");
 }
 
@@ -121,4 +143,33 @@ function openMessageBox(){
     console.log(response);
     console.log(checkboxChecked);
   });
+} 
+function replicateDb(){
+  // Replicate data from local to remote
+  db.replicate.to(remoteDBURL,{
+    auth: {
+      username: 'admin',
+      password: 'admin',
+    },
+  })
+    .on('complete', () => {
+      console.log('Replication to remote database completed.');
+    })
+    .on('error', (err) => {
+      console.error('Replication error:', err);
+    });
+
+  // Replicate data from remote to local (bidirectional sync)
+  db.replicate.from(remoteDBURL,{
+    auth: {
+      username: 'admin',
+      password: 'admin',
+    },
+  })
+    .on('complete', () => {
+      console.log('Replication from remote database completed.');
+    })
+    .on('error', (err) => {
+      console.error('Replication error:', err);
+    });
 }

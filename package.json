@@ -33,6 +33,7 @@
     "axios": "^1.5.1",
     "bootstrap": "^5.3.2",
     "electron-squirrel-startup": "^1.0.0",
+    "moment": "^2.29.4",
     "pouchdb": "^8.0.1"
   }
 }
