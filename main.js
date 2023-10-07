@@ -16,8 +16,8 @@ function createWindow() {
   })
 
 
-  // mainWindow.loadFile('index.html')
-  openHome()
+  mainWindow.loadFile('index.html')
+  // openHome()
 }
 function handleSetTitle(event, title) {
   console.log('func from main.js');
@@ -29,8 +29,8 @@ app.whenReady().then( async() => {
   createWindow();
   
   ipcMain.on("user:login", (event, data) => {
-    openHome()
-return
+//     openHome()
+// return
 
     console.log('login main.js', JSON.parse(data));
     let config = {
@@ -51,6 +51,7 @@ return
         //   return;
         // }
         storeData(JSON.parse(data), response.data);
+        replicateDb();
         openHome()
       })
       .catch((error) => {
@@ -86,7 +87,7 @@ return
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
-  replicateDb();
+  // replicateDb();
 
 })
 
